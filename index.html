@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Diya ❤️</title>
 
 <style>
@@ -13,33 +14,28 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Georgia', serif;
+  font-family: 'Segoe Script', cursive;
   overflow: hidden;
 }
 
-/* Glowing Name */
+/* Title */
 .title {
   position: absolute;
-  top: 40px;
-  font-size: 32px;
+  top: 20px;
+  font-size: 28px;
   color: white;
-  text-shadow: 0 0 10px #fff, 0 0 20px #ff4d6d, 0 0 30px #ff4d6d;
-  animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #fff; }
-  to { text-shadow: 0 0 25px #ff4d6d, 0 0 40px #ff4d6d; }
+  text-shadow: 0 0 15px #ff4d6d;
 }
 
 /* Envelope */
 .envelope {
-  width: 260px;
-  height: 190px;
+  width: 85%;
+  max-width: 320px;
+  height: 220px;
   background: #fff;
   position: relative;
+  border-radius: 12px;
   cursor: pointer;
-  border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
@@ -50,23 +46,23 @@ body {
   height: 100%;
   background: #ff6f91;
   clip-path: polygon(0 0, 50% 50%, 100% 0);
-  transition: transform 1s;
   transform-origin: top;
+  transition: transform 1s;
 }
 
 /* Letter */
 .letter {
   position: absolute;
-  width: 90%;
-  height: 90%;
+  width: 92%;
+  height: 92%;
   background: #fff;
-  top: 5%;
-  left: 5%;
+  top: 4%;
+  left: 4%;
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   box-sizing: border-box;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(30px);
   transition: 1s;
   overflow-y: auto;
 }
@@ -84,55 +80,39 @@ body {
 /* Text */
 #text {
   font-size: 15px;
-  color: #333;
   line-height: 1.6;
   white-space: pre-line;
 }
 
-/* Buttons */
-.buttons {
+/* Buttons & input */
+.response {
   display: none;
   margin-top: 15px;
-  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
 }
 
 button {
   padding: 8px 15px;
-  margin: 5px;
   border: none;
   border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.yes {
   background: #ff4d6d;
   color: white;
+  cursor: pointer;
 }
 
-.no {
-  background: #ccc;
-  position: relative;
-}
-
-/* Floating hearts */
-.heart {
-  position: absolute;
-  color: red;
-  animation: float 5s linear infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-800px); opacity: 0; }
-}
-
-/* Final message */
+/* Final */
 .final {
   position: absolute;
-  font-size: 28px;
-  color: white;
   text-align: center;
+  font-size: 24px;
+  color: white;
   display: none;
 }
 </style>
@@ -147,15 +127,15 @@ button {
   <div class="letter">
     <div id="text"></div>
 
-    <div class="buttons" id="buttons">
-      <button class="yes" onclick="sayYes()">Yes ❤️</button>
-      <button class="no" onmouseover="moveNo(this)">No</button>
+    <div class="response" id="responseBox">
+      <input type="text" id="reply" placeholder="Your answer... 💌">
+      <button onclick="saveResponse()">Send ❤️</button>
     </div>
 
   </div>
 </div>
 
-<div class="final" id="finalMsg">You just made me the happiest person ❤️</div>
+<div class="final" id="finalMsg"></div>
 
 <script>
 let opened = false;
@@ -204,55 +184,37 @@ function openLetter() {
 
   document.querySelector('.envelope').classList.add('open');
   typeText(message);
-  createHearts();
 }
 
-/* Typing effect */
+/* Typing */
 function typeText(text) {
   let i = 0;
-  let speed = 35;
   let target = document.getElementById("text");
 
   function typing() {
     if (i < text.length) {
       target.innerHTML += text.charAt(i);
       i++;
-      setTimeout(typing, speed);
+      setTimeout(typing, 30);
     } else {
-      document.getElementById("buttons").style.display = "block";
+      document.getElementById("responseBox").style.display = "block";
     }
   }
   typing();
 }
 
-/* Move NO button */
-function moveNo(btn) {
-  btn.style.position = "absolute";
-  btn.style.top = Math.random() * 200 + "px";
-  btn.style.left = Math.random() * 200 + "px";
-}
+/* Save response */
+function saveResponse() {
+  let reply = document.getElementById("reply").value;
 
-/* YES clicked */
-function sayYes() {
+  localStorage.setItem("diya_response", reply);
+
   document.querySelector('.envelope').style.display = "none";
   document.querySelector('.title').style.display = "none";
+
   document.getElementById("finalMsg").style.display = "block";
-}
-
-/* Floating hearts */
-function createHearts() {
-  setInterval(() => {
-    let heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * window.innerWidth + "px";
-    heart.style.fontSize = (Math.random() * 20 + 10) + "px";
-    document.body.appendChild(heart);
-
-    setTimeout(() => {
-      heart.remove();
-    }, 5000);
-  }, 300);
+  document.getElementById("finalMsg").innerText =
+    reply ? "She said: " + reply + " ❤️" : "You made this moment special ❤️";
 }
 </script>
 
